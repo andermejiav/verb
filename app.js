@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMessage = document.getElementById('error-message');
     const verbTitle = document.getElementById('verb-title');
     const verbTranslation = document.getElementById('verb-translation');
+    const translateBtn = document.getElementById('translate-btn');
     const historyContainer = document.getElementById('search-history');
     const historyList = document.getElementById('history-list');
     
@@ -81,22 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Update UI
                 verbTitle.textContent = verb;
-                verbTranslation.textContent = 'Traduciendo...';
-                
-                // Fetch translation
-                fetch(`https://api.mymemory.translated.net/get?q=${verb}&langpair=en|es`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data && data.responseData && data.responseData.translatedText) {
-                            verbTranslation.textContent = data.responseData.translatedText;
-                        } else {
-                            verbTranslation.textContent = 'Traducción no encontrada';
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Translation error:', err);
-                        verbTranslation.textContent = '';
-                    });
+                verbTranslation.classList.add('hidden');
+                translateBtn.classList.remove('hidden');
+                translateBtn.dataset.verb = verb;
                 
                 // Compromise conjugation outputs
                 presentTense.textContent = conjugations.PresentTense || verb;
@@ -118,4 +106,29 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsContainer.classList.add('hidden');
         errorMessage.classList.remove('hidden');
     }
+
+    translateBtn.addEventListener('click', () => {
+        const verbToTranslate = translateBtn.dataset.verb;
+        if (!verbToTranslate) return;
+        
+        translateBtn.classList.add('hidden');
+        verbTranslation.classList.remove('hidden');
+        verbTranslation.textContent = 'Traduciendo...';
+        
+        fetch(`https://api.mymemory.translated.net/get?q=${verbToTranslate}&langpair=en|es`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.responseData && data.responseData.translatedText) {
+                    verbTranslation.textContent = data.responseData.translatedText;
+                } else {
+                    verbTranslation.textContent = 'Traducción no encontrada';
+                    translateBtn.classList.remove('hidden');
+                }
+            })
+            .catch(err => {
+                console.error('Translation error:', err);
+                verbTranslation.textContent = 'Error al traducir';
+                translateBtn.classList.remove('hidden');
+            });
+    });
 });
