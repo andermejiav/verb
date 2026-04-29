@@ -49,6 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const pastTense = document.getElementById('past-tense');
     const participleTense = document.getElementById('participle-tense');
     const gerundTense = document.getElementById('gerund-tense');
+    
+    // Translation elements
+    const presentTranslation = document.getElementById('present-translation');
+    const pastTranslation = document.getElementById('past-translation');
+    const participleTranslation = document.getElementById('participle-translation');
+    const gerundTranslation = document.getElementById('gerund-translation');
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -86,6 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 translateBtn.classList.remove('hidden');
                 translateBtn.dataset.verb = verb;
                 
+                // Hide tense translations on new search
+                presentTranslation.classList.add('hidden');
+                pastTranslation.classList.add('hidden');
+                participleTranslation.classList.add('hidden');
+                gerundTranslation.classList.add('hidden');
+                
                 // Compromise conjugation outputs
                 presentTense.textContent = conjugations.PresentTense || verb;
                 pastTense.textContent = conjugations.PastTense || verb + "ed";
@@ -115,20 +127,36 @@ document.addEventListener('DOMContentLoaded', () => {
         verbTranslation.classList.remove('hidden');
         verbTranslation.textContent = 'Traduciendo...';
         
-        fetch(`https://api.mymemory.translated.net/get?q=${verbToTranslate}&langpair=en|es`)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.responseData && data.responseData.translatedText) {
-                    verbTranslation.textContent = data.responseData.translatedText;
-                } else {
-                    verbTranslation.textContent = 'Traducción no encontrada';
-                    translateBtn.classList.remove('hidden');
-                }
-            })
-            .catch(err => {
-                console.error('Translation error:', err);
-                verbTranslation.textContent = 'Error al traducir';
-                translateBtn.classList.remove('hidden');
-            });
+        const tenses = [
+            { el: presentTranslation, text: presentTense.textContent },
+            { el: pastTranslation, text: pastTense.textContent },
+            { el: participleTranslation, text: participleTense.textContent },
+            { el: gerundTranslation, text: gerundTense.textContent }
+        ];
+
+        tenses.forEach(t => {
+            t.el.classList.remove('hidden');
+            t.el.textContent = '...';
+        });
+
+        const fetchTranslation = (word) => {
+            return fetch(`https://api.mymemory.translated.net/get?q=${word}&langpair=en|es`)
+                .then(r => r.json())
+                .then(d => {
+                    if (d && d.responseData && d.responseData.translatedText) {
+                        return d.responseData.translatedText;
+                    }
+                    return 'Error';
+                })
+                .catch(() => 'Error');
+        };
+
+        // Translate the main verb
+        fetchTranslation(verbToTranslate).then(text => verbTranslation.textContent = text);
+
+        // Translate the tenses
+        tenses.forEach(t => {
+            fetchTranslation(t.text).then(text => t.el.textContent = text);
+        });
     });
 });

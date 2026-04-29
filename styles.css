@@ -218,6 +218,16 @@ button:active {
     color: white;
 }
 
+.tense-translation {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    padding-top: 0.5rem;
+    text-transform: capitalize;
+}
+
 .error-message {
     text-align: center;
     color: var(--error-color);
