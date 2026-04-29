@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsContainer = document.getElementById('results');
     const errorMessage = document.getElementById('error-message');
     const verbTitle = document.getElementById('verb-title');
+    const verbTranslation = document.getElementById('verb-translation');
     const historyContainer = document.getElementById('search-history');
     const historyList = document.getElementById('history-list');
     
@@ -80,6 +81,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Update UI
                 verbTitle.textContent = verb;
+                verbTranslation.textContent = 'Traduciendo...';
+                
+                // Fetch translation
+                fetch(`https://api.mymemory.translated.net/get?q=${verb}&langpair=en|es`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.responseData && data.responseData.translatedText) {
+                            verbTranslation.textContent = data.responseData.translatedText;
+                        } else {
+                            verbTranslation.textContent = 'Traducción no encontrada';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Translation error:', err);
+                        verbTranslation.textContent = '';
+                    });
                 
                 // Compromise conjugation outputs
                 presentTense.textContent = conjugations.PresentTense || verb;
