@@ -248,3 +248,51 @@ button:active {
     10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
     20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 600px) {
+    .container {
+        padding: 1rem;
+        gap: 1.5rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+
+    .search-box {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+    }
+
+    button {
+        width: 100%;
+        padding: 0.875rem 1.25rem;
+    }
+
+    #verb-title {
+        font-size: 1.75rem;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 1.25rem;
+    }
+
+    .tense-result {
+        font-size: 1.25rem;
+    }
+}
